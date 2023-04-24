@@ -1,0 +1,113 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+# tfc/Base
+#
+# The purpose of this template is to provide flexibility to the user, so
+# they are able to only include the jobs that they find interesting.
+#
+# Therefore, this template is not supposed to run any jobs. The idea is to only
+# create hidden jobs. See: https://docs.gitlab.com/ee/ci/jobs/#hide-jobs
+# This template provides a foundation for creating CI/CD jobs specifically for the terraform-cloud platform.
+# This template can be included locally or remotely using include:remote.
+
+# Our approach to sharing information across jobs is opinionated. To ensure that all jobs have access to the necessary
+# information, we use dotenv artifacts to expose additional variables.
+# To maintain consistency, any variables created as a result of this approach are intentionally lowercase.
+
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+
+# See https://docs.gitlab.com/ee/ci/yaml/index.html for all available options
+
+# Please refer: https://docs.gitlab.com/ee/ci/variables/
+# In order to use this template, the following CI/CD variables need to be defined in GitLab. The base remote template relies on these variables
+# Please refer: https://docs.gitlab.com/ee/ci/variables/
+# - TF_API_TOKEN: The token used to authenticate with Terraform Cloud.
+# - TF_CLOUD_ORGANIZATION: The name of the organization in Terraform Cloud. This variable is included in links that are shown in the output. The links might not work if this variable is masked.
+# - TF_WORKSPACE: The Workspace name that specifies where the run will be executed. This variable is included in links that are shown in the output. The links might not work if this variable is masked.
+# - GITLAB_API_TOKEN: The access token for the GitLab API. This needs to be set only if you intend to comment the terraform plan output on the merge request. 
+#         **NOTE**: We used the 'Developer' role for the access token. Any other role might work, or might not work and result in a 4XX status code. 
+#          Please refer: https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html
+# Additional optional variables:
+#   - TF_CLOUD_HOSTNAME :  Defaults to 'app.terraform.io'. The hostname of a Terraform Enterprise installation, if using Terraform Enterprise.
+#   - TF_DIRECTORY: Defaults to the root of your project directory. Path to the terraform configuration files. This needs to be set if the terraform config files are not in the root of your project, otherwise there will be an error.
+#   - TF_LOG: Defaults to 'OFF'. Logging level of the tfc CI tooling binary. We recommend to set this to INFO or DEBUG to troubleshoot any issues. DEBUG is more verbose.
+
+# You have the option to define your Terraform variables using the standard "TF_VAR_" prefix, either within this file or as CI/CD variables in the GitLab UI. 
+# Please refer: https://developer.hashicorp.com/terraform/cli/config/environment-variables#tf_var_name
+# An example to do this inline, 
+#   variables:
+#     TF_VAR_image_id: "\"ami-abc1\"" # NOTE: The escape characters are required to pass this safely downstream into terraform as a string
+#     TF_VAR_user_map: '{"1":{"name":"jason bourne","size":2}}'
+#     TF_VAR_availability_zone_names: '["us-east-1a","us-west-1c", "us-west-2b"]'
+
+# If you opt to define variables directly within the file, be aware that certain variables (e.g., TF_API_TOKEN, GITLAB_API_TOKEN, etc.) are sensitive and should be handled with caution. 
+# Defining sensitive variables in this file is not recommended.
+
+# The default image is the one that contains the binary for our tool: https://github.com/hashicorp/tfc-workflows-tooling
+default:
+  image: mjyocca/tfci:latest
+
+# Create and upload a configuration version to terraform-cloud.variables:
+# exported dotenv variables that can be referenced in later jobs:
+#  - status: one of "Success", "Error", "Timeout", "Noop". Noop means no operation.
+#  - configuration_version_id
+.tfc:upload_configuration:
+  script:
+    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION upload -workspace=$TF_WORKSPACE -speculative=$SPECULATIVE -directory=$TF_DIRECTORY
+  artifacts:
+    reports:
+      dotenv: .env
+
+# Create a Terraform Cloud run
+# exported dotenv variables that can be referenced in later jobs:
+#  - status: one of "Success", "Error", "Timeout", "Noop". Noop means no operation.
+#  - run_id
+#  - plan_id
+.tfc:create_run:
+  variables:
+    CONFIGURATION_VERSION_ID: $configuration_version_id
+    MESSAGE: "Base template message. Override this"
+  script:
+    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run create -workspace=$TF_WORKSPACE -configuration_version=$CONFIGURATION_VERSION_ID -message=$MESSAGE -plan-only=$PLAN_ONLY
+  artifacts:
+    reports:
+      dotenv: .env
+
+# Apply a Terraform Cloud run
+.tfc:apply_run:
+  variables:
+    RUN_ID: $run_id
+    COMMENT: "Base template comment. Override this"
+  script:
+    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run apply -run=$RUN_ID -comment=$COMMENT
+  artifacts:
+    reports:
+      dotenv: .env
+
+# Output Plan details
+# exported dotenv variables that can be referenced in later jobs:
+#  - status: One of "Success", "Error", "Timeout", "Noop". Noop means no operation.
+#  - add: Resources to add
+#  - change: Resources to change
+#  - destroy: Resources to destroy
+.tfc:plan_output:
+  variables:
+    PLAN_ID: $plan_id
+  script:
+    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION plan output -plan=$PLAN_ID
+  artifacts:
+    reports:
+      dotenv: .env
+
+# tfc:comment_on_merge_request is a hidden job that posts a comment to a Gitlab merge request for which the pipeline is being run.
+# GITLAB_API_TOKEN needs to be defined to use this job. Please refer: https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html
+.tfc:comment_on_merge_request:
+  image: alpine/curl
+  variables:
+    MR_COMMENT: |
+      Plan: ${add} to add, ${change} to change, ${destroy} to destroy.
+      [Terraform Cloud Plan](${run_link})
+  script:
+    - 'curl --fail-with-body --request POST --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --data-urlencode "body=$MR_COMMENT"'
