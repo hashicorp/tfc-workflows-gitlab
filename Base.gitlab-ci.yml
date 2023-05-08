@@ -47,7 +47,7 @@
 
 # The default image is the one that contains the binary for our tool: https://github.com/hashicorp/tfc-workflows-tooling
 default:
-  image: mjyocca/tfci:latest
+  image: hashicorp/tfci:latest
 
 # Create and upload a configuration version to terraform-cloud.variables:
 # exported dotenv variables that can be referenced in later jobs:
