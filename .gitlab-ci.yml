@@ -4,7 +4,7 @@
 # The link to the remote base template. Note that the base template URL is versioned. Please check the base template for additional variables that need to be defined in GitLab.
 # Please subscribe to https://github.com/hashicorp/tfc-workflows-gitlab for updates.
 include:
-  remote: https://raw.githubusercontent.com/hashicorp/tfc-workflows-gitlab/main/Base.gitlab-ci.yml
+  remote: https://raw.githubusercontent.com/hashicorp/tfc-workflows-gitlab/v1.0.0/Base.gitlab-ci.yml
 
 # Please refer: https://docs.gitlab.com/ee/ci/variables/
 # In order to use this template, the following CI/CD variables need to be defined in GitLab. The base remote template relies on these variables
