@@ -86,7 +86,6 @@ plan_output:
 comment_on_merge_request:
   stage: ".post"
   image: alpine/curl
-  needs: [ "plan_output" ]
   variables:
     MR_COMMENT: |
       Plan: ${add} to add, ${change} to change, ${destroy} to destroy.
