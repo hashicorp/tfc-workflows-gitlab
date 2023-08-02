@@ -96,6 +96,8 @@ comment_on_merge_request:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
+# Similar to comment_on_merge_request job, however this will only run if a prior job has failed
+# Will surface a merge request comment, indicating a possible Terraform Cloud Run failure
 on_failure_merge_request_comment:
   stage: ".post"
   image: alpine/curl
@@ -111,6 +113,8 @@ on_failure_merge_request_comment:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   when: on_failure
 
+# Terraform Cloud Run may not have errored, but could possibly have an undesirable status
+# Dpending on threshold, can modify or remove for your use case
 check_run_status:
   stage: ".post"
   script:
