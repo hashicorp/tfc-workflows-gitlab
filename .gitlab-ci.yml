@@ -114,5 +114,6 @@ on_failure_merge_request_comment:
 check_run_status:
   stage: ".post"
   script:
-    - echo "$run_status"
     - if [ "$run_status" != "planned_and_finished" ]; then exit 1; fi;
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
