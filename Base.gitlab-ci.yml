@@ -26,28 +26,28 @@
 # - TF_API_TOKEN: The token used to authenticate with Terraform Cloud.
 # - TF_CLOUD_ORGANIZATION: The name of the organization in Terraform Cloud. This variable is included in links that are shown in the output. The links might not work if this variable is masked.
 # - TF_WORKSPACE: The Workspace name that specifies where the run will be executed. This variable is included in links that are shown in the output. The links might not work if this variable is masked.
-# - GITLAB_API_TOKEN: The access token for the GitLab API. This needs to be set only if you intend to comment the terraform plan output on the merge request. 
-#         **NOTE**: We used the 'Developer' role for the access token. Any other role might work, or might not work and result in a 4XX status code. 
+# - GITLAB_API_TOKEN: The access token for the GitLab API. This needs to be set only if you intend to comment the terraform plan output on the merge request.
+#         **NOTE**: We used the 'Developer' role for the access token. Any other role might work, or might not work and result in a 4XX status code.
 #          Please refer: https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html
 # Additional optional variables:
 #   - TF_CLOUD_HOSTNAME :  Defaults to 'app.terraform.io'. The hostname of a Terraform Enterprise installation, if using Terraform Enterprise.
 #   - TF_DIRECTORY: Defaults to the root of your project directory. Path to the terraform configuration files. This needs to be set if the terraform config files are not in the root of your project, otherwise there will be an error.
 #   - TF_LOG: Defaults to 'OFF'. Logging level of the tfc CI tooling binary. We recommend to set this to INFO or DEBUG to troubleshoot any issues. DEBUG is more verbose.
 
-# You have the option to define your Terraform variables using the standard "TF_VAR_" prefix, either within this file or as CI/CD variables in the GitLab UI. 
+# You have the option to define your Terraform variables using the standard "TF_VAR_" prefix, either within this file or as CI/CD variables in the GitLab UI.
 # Please refer: https://developer.hashicorp.com/terraform/cli/config/environment-variables#tf_var_name
-# An example to do this inline, 
+# An example to do this inline,
 #   variables:
 #     TF_VAR_image_id: "\"ami-abc1\"" # NOTE: The escape characters are required to pass this safely downstream into terraform as a string
 #     TF_VAR_user_map: '{"1":{"name":"jason bourne","size":2}}'
 #     TF_VAR_availability_zone_names: '["us-east-1a","us-west-1c", "us-west-2b"]'
 
-# If you opt to define variables directly within the file, be aware that certain variables (e.g., TF_API_TOKEN, GITLAB_API_TOKEN, etc.) are sensitive and should be handled with caution. 
+# If you opt to define variables directly within the file, be aware that certain variables (e.g., TF_API_TOKEN, GITLAB_API_TOKEN, etc.) are sensitive and should be handled with caution.
 # Defining sensitive variables in this file is not recommended.
 
 # The default image is the one that contains the binary for our tool: https://github.com/hashicorp/tfc-workflows-tooling
 default:
-  image: hashicorp/tfci:v1.0.2
+  image: hashicorp/tfci:v1.0.3
 
 # Create and upload a configuration version to terraform-cloud.variables:
 # exported dotenv variables that can be referenced in later jobs:
