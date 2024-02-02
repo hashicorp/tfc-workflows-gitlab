@@ -46,6 +46,8 @@ workflow:
         PROJECT_PIPELINE_NAME: "$CI_DEFAULT_BRANCH pipeline"
         PLAN_ONLY: "false"
         SPECULATIVE: "false"
+        SAVE_PLAN: "false"
+        IS_DESTROY: "false"
     # Workflows on merge requests only do a plan run.
     # Alternatively, you could trigger a plan run on any push, if: $CI_PIPELINE_SOURCE == "push"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -54,6 +56,8 @@ workflow:
         PROJECT_PIPELINE_NAME: "Merge Request pipeline: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
         PLAN_ONLY: "true"
         SPECULATIVE: "true"
+        SAVE_PLAN: "false"
+        IS_DESTROY: "false"
 
 upload_configuration:
   stage: ".pre"
