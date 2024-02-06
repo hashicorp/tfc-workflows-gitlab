@@ -47,7 +47,7 @@
 
 # The default image is the one that contains the binary for our tool: https://github.com/hashicorp/tfc-workflows-tooling
 default:
-  image: hashicorp/tfci:v1.1.1
+  image: hashicorp/tfci:v1.2.0
 
 # Create and upload a configuration version to terraform-cloud.variables:
 # exported dotenv variables that can be referenced in later jobs:
@@ -70,7 +70,7 @@ default:
     CONFIGURATION_VERSION_ID: $configuration_version_id
     MESSAGE: "Base template message. Override this"
   script:
-    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run create -workspace=$TF_WORKSPACE -configuration_version=$CONFIGURATION_VERSION_ID -message=$MESSAGE -plan-only=$PLAN_ONLY
+    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run create -workspace=$TF_WORKSPACE -configuration_version=$CONFIGURATION_VERSION_ID -message=$MESSAGE -plan-only=$PLAN_ONLY -save-plan=$SAVE_PLAN -is-destroy=$IS_DESTROY
   artifacts:
     reports:
       dotenv: .env
