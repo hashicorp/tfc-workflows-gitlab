@@ -103,7 +103,7 @@ default:
 
 # Workspace output
 # Returns JSON array of the latest state-version output(s) for a given Terraform Cloud workspace
-# The array is put in an file named Output.json that can then be consumed or processed in later stage
+# The array is put in a file named Output.json that can then be consumed or processed in later stage
 # exported dotenv variables that can be referenced in later jobs:
 #  - status: One of "Success", "Error", "Timeout", "Noop". Noop means no operation.
 .tfc:workspace_output:
