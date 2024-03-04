@@ -101,6 +101,20 @@ default:
     reports:
       dotenv: .env
 
+# Workspace output
+# Returns JSON array of the latest state-version output(s) for a given Terraform Cloud workspace
+# The array is put in a file named Output.json that can then be consumed or processed in later stage
+# exported dotenv variables that can be referenced in later jobs:
+#  - status: One of "Success", "Error", "Timeout", "Noop". Noop means no operation.
+.tfc:workspace_output:
+  script:
+    - tfci -hostname=$TF_CLOUD_HOSTNAME --token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION  workspace output list -workspace=$TF_WORKSPACE > "output.json"
+  artifacts:
+    reports:
+      dotenv: .env
+    paths:
+      - "output.json"
+
 # tfc:comment_on_merge_request is a hidden job that posts a comment to a Gitlab merge request for which the pipeline is being run.
 # GITLAB_API_TOKEN needs to be defined to use this job. Please refer: https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html
 .tfc:comment_on_merge_request:
