@@ -55,7 +55,6 @@ default:
 #  - configuration_version_id
 .tfc:upload_configuration:
   variables:
-    TF_DIRECTORY: ""
     SPECULATIVE: false
   script:
     - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION upload -workspace=$TF_WORKSPACE -speculative=$SPECULATIVE -directory=$TF_DIRECTORY
