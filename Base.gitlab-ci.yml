@@ -54,6 +54,8 @@ default:
 #  - status: one of "Success", "Error", "Timeout", "Noop". Noop means no operation.
 #  - configuration_version_id
 .tfc:upload_configuration:
+  variables:
+    SPECULATIVE: false
   script:
     - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION upload -workspace=$TF_WORKSPACE -speculative=$SPECULATIVE -directory=$TF_DIRECTORY
   artifacts:
@@ -69,6 +71,9 @@ default:
   variables:
     CONFIGURATION_VERSION_ID: $configuration_version_id
     MESSAGE: "Base template message. Override this"
+    PLAN_ONLY: false
+    SAVE_PLAN: false
+    IS_DESTROY: false
   script:
     - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run create -workspace=$TF_WORKSPACE -configuration_version=$CONFIGURATION_VERSION_ID -message=$MESSAGE -plan-only=$PLAN_ONLY -save-plan=$SAVE_PLAN -is-destroy=$IS_DESTROY -target=$TARGET
   artifacts:
