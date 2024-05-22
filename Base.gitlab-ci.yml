@@ -23,8 +23,8 @@
 # Please refer: https://docs.gitlab.com/ee/ci/variables/
 # In order to use this template, the following CI/CD variables need to be defined in GitLab. The base remote template relies on these variables
 # Please refer: https://docs.gitlab.com/ee/ci/variables/
-# - TF_API_TOKEN: The token used to authenticate with Terraform Cloud.
-# - TF_CLOUD_ORGANIZATION: The name of the organization in Terraform Cloud. This variable is included in links that are shown in the output. The links might not work if this variable is masked.
+# - TF_API_TOKEN: The token used to authenticate with HCP Terraform.
+# - TF_CLOUD_ORGANIZATION: The name of the organization in HCP Terraform. This variable is included in links that are shown in the output. The links might not work if this variable is masked.
 # - TF_WORKSPACE: The Workspace name that specifies where the run will be executed. This variable is included in links that are shown in the output. The links might not work if this variable is masked.
 # - GITLAB_API_TOKEN: The access token for the GitLab API. This needs to be set only if you intend to comment the terraform plan output on the merge request.
 #         **NOTE**: We used the 'Developer' role for the access token. Any other role might work, or might not work and result in a 4XX status code.
@@ -62,7 +62,7 @@ default:
     reports:
       dotenv: .env
 
-# Create a Terraform Cloud run
+# Create a HCP Terraform run
 # exported dotenv variables that can be referenced in later jobs:
 #  - status: one of "Success", "Error", "Timeout", "Noop". Noop means no operation.
 #  - run_id
@@ -80,7 +80,7 @@ default:
     reports:
       dotenv: .env
 
-# Apply a Terraform Cloud run
+# Apply a HCP Terraform run
 .tfc:apply_run:
   variables:
     RUN_ID: $run_id
@@ -107,7 +107,7 @@ default:
       dotenv: .env
 
 # Workspace output
-# Returns JSON array of the latest state-version output(s) for a given Terraform Cloud workspace
+# Returns JSON array of the latest state-version output(s) for a given HCP Terraform workspace
 # The array is put in a file named Output.json that can then be consumed or processed in later stage
 # exported dotenv variables that can be referenced in later jobs:
 #  - status: One of "Success", "Error", "Timeout", "Noop". Noop means no operation.
@@ -127,6 +127,6 @@ default:
   variables:
     MR_COMMENT: |
       Plan: ${add} to add, ${change} to change, ${destroy} to destroy.
-      [Terraform Cloud Plan](${run_link})
+      [HCP Terraform Plan](${run_link})
   script:
     - 'curl --fail-with-body --request POST --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --data-urlencode "body=$MR_COMMENT"'
