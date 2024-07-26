@@ -75,7 +75,7 @@ default:
     SAVE_PLAN: false
     IS_DESTROY: false
   script:
-    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run create -workspace=$TF_WORKSPACE -configuration_version=$CONFIGURATION_VERSION_ID -message=$MESSAGE -plan-only=$PLAN_ONLY -save-plan=$SAVE_PLAN -is-destroy=$IS_DESTROY -target=$TARGET
+    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run create -workspace=$TF_WORKSPACE -configuration_version=$CONFIGURATION_VERSION_ID -message="$MESSAGE" -plan-only=$PLAN_ONLY -save-plan=$SAVE_PLAN -is-destroy=$IS_DESTROY -target=$TARGET
   artifacts:
     reports:
       dotenv: .env
@@ -86,7 +86,7 @@ default:
     RUN_ID: $run_id
     COMMENT: "Base template comment. Override this"
   script:
-    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run apply -run=$RUN_ID -comment=$COMMENT
+    - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION run apply -run=$RUN_ID -comment="$COMMENT"
   artifacts:
     reports:
       dotenv: .env
