@@ -1,5 +1,8 @@
 # UNRELEASED
 
+# v1.3.2
+* Bug fixes and enhancements from [tfc-workflows-tooling@v1.3.2](https://github.com/hashicorp/tfc-workflows-tooling/releases/tag/v1.3.2) version bump
+
 # v1.3.1
 * Fixes message argument to correctly handle multi string values by @Rohlik [#26](https://github.com/hashicorp/tfc-workflows-gitlab/pull/26)
 * Bug fixes and enhancements from [tfc-workflows-tooling@v1.3.1](https://github.com/hashicorp/tfc-workflows-tooling/releases/tag/v1.3.1)
