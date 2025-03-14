@@ -49,13 +49,15 @@
 default:
   image: hashicorp/tfci:v1.3.2
 
+variables:
+  SPECULATIVE: "false"  # Global default for all pipelines
+  PLAN_ONLY: "false"    # Global default for all pipelines
+
 # Create and upload a configuration version to terraform-cloud.variables:
 # exported dotenv variables that can be referenced in later jobs:
 #  - status: one of "Success", "Error", "Timeout", "Noop". Noop means no operation.
 #  - configuration_version_id
 .tfc:upload_configuration:
-  variables:
-    SPECULATIVE: false
   script:
     - tfci -hostname=$TF_CLOUD_HOSTNAME  -token=$TF_API_TOKEN -organization=$TF_CLOUD_ORGANIZATION upload -workspace=$TF_WORKSPACE -speculative=$SPECULATIVE -directory=$TF_DIRECTORY
   artifacts:
@@ -71,7 +73,6 @@ default:
   variables:
     CONFIGURATION_VERSION_ID: $configuration_version_id
     MESSAGE: "Base template message. Override this"
-    PLAN_ONLY: false
     SAVE_PLAN: false
     IS_DESTROY: false
   script:
