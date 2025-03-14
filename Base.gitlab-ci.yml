@@ -47,7 +47,7 @@
 
 # The default image is the one that contains the binary for our tool: https://github.com/hashicorp/tfc-workflows-tooling
 default:
-  image: hashicorp/tfci:v1.3.2
+  image: hashicorp/tfci:v1.3.3
 
 variables:
   SPECULATIVE: "false"  # Global default for all pipelines

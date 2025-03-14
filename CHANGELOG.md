@@ -1,5 +1,9 @@
 # UNRELEASED
 
+# v1.3.3
+* Moves SPECULATIVE and PLAN_ONLY variable defaults to global for correct precedence by @richard-russell [#31](https://github.com/hashicorp/tfc-workflows-gitlab/pull/31)
+* Bug fixes and enhancements from [tfc-workflows-tooling@v1.3.3](https://github.com/hashicorp/tfc-workflows-tooling/releases/tag/v1.3.3) version bump
+
 # v1.3.2
 * Bug fixes and enhancements from [tfc-workflows-tooling@v1.3.2](https://github.com/hashicorp/tfc-workflows-tooling/releases/tag/v1.3.2) version bump
 
